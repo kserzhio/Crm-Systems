@@ -32,7 +32,7 @@ module.exports.create = async function (req,res) {
     const category = new Category({
         name:req.body.name,
         user:req.user.id,
-        imgSrc:req.file.path
+        imgSrc:req.file ? req.file.path : ''
     })
     try {
         await category.save()
