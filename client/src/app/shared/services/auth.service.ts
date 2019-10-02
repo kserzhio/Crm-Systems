@@ -36,7 +36,7 @@ export class AuthService {
     isAuthenticated():boolean{
         return !!this.token
     }
-    logiut(){
+    logout(){
         this.setToken(null)
         localStorage.clear()
     }
