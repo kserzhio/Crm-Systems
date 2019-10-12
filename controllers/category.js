@@ -47,7 +47,7 @@ module.exports.update = async function (req,res) {
     }
     if(req)
     try {
-        const category = await Category.findAndUpdate(
+        const category = await Category.findOneAndUpdate(
             {_id:req.params.id},
             {$set:update},
             {new:true}

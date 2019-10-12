@@ -1,5 +1,5 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {ActivatedRoute, Params} from "@angular/router";
+import {ActivatedRoute, Params, Router} from "@angular/router";
 import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {CategoriesService} from "../../shared/services/categories.service";
 import {switchMap} from "rxjs/operators";
@@ -16,10 +16,10 @@ export class CategoriesFormComponent implements OnInit {
   @ViewChild('input',{static: false}) inputRef:ElementRef
   form:FormGroup
   image:File
-  imagePreview
+  imagePreview:string
   category:Category
   isNew = true
-  constructor(private route:ActivatedRoute,private categoriesService:CategoriesService) { }
+  constructor(private route:ActivatedRoute,private categoriesService:CategoriesService,private router:Router) { }
 
   ngOnInit() {
     this.form = new FormGroup({
@@ -45,7 +45,7 @@ export class CategoriesFormComponent implements OnInit {
                 this.form.patchValue({
                   name:category.name
                 })
-                this.imagePreview = category.imageSrc
+                this.imagePreview = category.imgSrc
                 MaterialService.updateTextInput()
               }
               this.form.enable()
@@ -62,7 +62,7 @@ export class CategoriesFormComponent implements OnInit {
 
     const reader = new FileReader()
     reader.onload = () => {
-      this.imagePreview = reader.result;
+      this.imagePreview = <string>reader.result;
     }
     reader.readAsDataURL(file)
   }
@@ -86,4 +86,15 @@ export class CategoriesFormComponent implements OnInit {
             }
       )
   }
+    deleteCategory(){
+      const dicision = window.confirm(`Вы уверены , что хотите удалить категорию "${this.category.name}"`)
+        if(dicision){
+            this.categoriesService.delete(this.category._id)
+                .subscribe(
+                    response => MaterialService.toast(response.message),
+                    error => MaterialService.toast(error.error.message),
+                    () => this.router.navigate(['/categories'])
+                )
+        }
+    }
 }
